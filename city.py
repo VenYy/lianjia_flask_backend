@@ -1,0 +1,587 @@
+import requests
+from lib.request.headers import create_headers
+from lxml import etree
+
+from lib.request.proxies import get_proxy
+
+cities = {
+    "hz": "杭州",
+    "huzhou": "湖州",
+    "jx": "嘉兴",
+    "jh": "金华",
+    "nb": "宁波",
+    "quzhou": "衢州",
+    "sx": "绍兴",
+    "taizhou": "台州",
+    "wz": "温州",
+    "yw": "义乌",
+}
+proxy = get_proxy().get("proxy")
+
+
+# 获取当前市级单位的区县列表
+def get_districts():
+    district_list = []
+    for city_en, city_zh in cities.items():
+        url = f"https://{city_en}.lianjia.com/zufang"
+        resp = requests.get(url, headers=create_headers(), proxies={"http": f"http://{proxy}"})
+        if resp.status_code != 200:
+            print("error: status_code: ", resp.status_code)
+            return
+        resp_content = resp.content.decode("utf-8")
+        root = etree.HTML(resp_content)
+        district_en_list = [i.split('/')[2] for i in root.xpath('//ul[@data-target="area"][1]/li/a/@href')[1:]]
+        district_zh_list = root.xpath('//ul[@data-target="area"]/li/a/text()')[1:]
+        district_url_list = root.xpath('//ul[@data-target="area"]/li/a/@href')[1:]
+        for district_en, district_zh, url in zip(district_en_list, district_zh_list, district_url_list):
+            district_list.append({"city_en": city_en,
+                                  "city_zh": city_zh,
+                                  "district_en": district_en,
+                                  "district_zh": district_zh,
+                                  "url": f"https://{city_en}.lianjia.com{url}"})
+    return district_list
+
+
+# print(get_districts())
+
+district_list = [{
+    'city_en': 'hz',
+    'city_zh': '杭州',
+    'district_en': 'fuyang',
+    'district_zh': '富阳',
+    'url': 'https://hz.lianjia.com/zufang/fuyang/'
+}, {
+    'city_en': 'hz',
+    'city_zh': '杭州',
+    'district_en': 'jiande',
+    'district_zh': '建德',
+    'url': 'https://hz.lianjia.com/zufang/jiande/'
+}, {
+    'city_en': 'hz',
+    'city_zh': '杭州',
+    'district_en': 'linan',
+    'district_zh': '临安',
+    'url': 'https://hz.lianjia.com/zufang/linan/'
+}, {
+    'city_en': 'hz',
+    'city_zh': '杭州',
+    'district_en': 'hainingshi',
+    'district_zh': '海宁市',
+    'url': 'https://hz.lianjia.com/zufang/hainingshi/'
+}, {
+    'city_en': 'hz',
+    'city_zh': '杭州',
+    'district_en': 'linpingqu',
+    'district_zh': '临平区',
+    'url': 'https://hz.lianjia.com/zufang/linpingqu/'
+}, {
+    'city_en': 'hz',
+    'city_zh': '杭州',
+    'district_en': 'qiantangqu',
+    'district_zh': '钱塘区',
+    'url': 'https://hz.lianjia.com/zufang/qiantangqu/'
+}, {
+    'city_en': 'hz',
+    'city_zh': '杭州',
+    'district_en': 'chunan1',
+    'district_zh': '淳安',
+    'url': 'https://hz.lianjia.com/zufang/chunan1/'
+}, {
+    'city_en': 'hz',
+    'city_zh': '杭州',
+    'district_en': 'tonglu1',
+    'district_zh': '桐庐',
+    'url': 'https://hz.lianjia.com/zufang/tonglu1/'
+}, {
+    'city_en': 'hz',
+    'city_zh': '杭州',
+    'district_en': 'gongshu',
+    'district_zh': '拱墅',
+    'url': 'https://hz.lianjia.com/zufang/gongshu/'
+}, {
+    'city_en': 'hz',
+    'city_zh': '杭州',
+    'district_en': 'xihu',
+    'district_zh': '西湖',
+    'url': 'https://hz.lianjia.com/zufang/xihu/'
+}, {
+    'city_en': 'hz',
+    'city_zh': '杭州',
+    'district_en': 'binjiang',
+    'district_zh': '滨江',
+    'url': 'https://hz.lianjia.com/zufang/binjiang/'
+}, {
+    'city_en': 'hz',
+    'city_zh': '杭州',
+    'district_en': 'yuhang',
+    'district_zh': '余杭',
+    'url': 'https://hz.lianjia.com/zufang/yuhang/'
+}, {
+    'city_en': 'hz',
+    'city_zh': '杭州',
+    'district_en': 'xiaoshan',
+    'district_zh': '萧山',
+    'url': 'https://hz.lianjia.com/zufang/xiaoshan/'
+}, {
+    'city_en': 'hz',
+    'city_zh': '杭州',
+    'district_en': 'shangcheng',
+    'district_zh': '上城',
+    'url': 'https://hz.lianjia.com/zufang/shangcheng/'
+}, {
+    'city_en': 'huzhou',
+    'city_zh': '湖州',
+    'district_en': 'nanxunqu',
+    'district_zh': '南浔区',
+    'url': 'https://huzhou.lianjia.com/zufang/nanxunqu/'
+}, {
+    'city_en': 'huzhou',
+    'city_zh': '湖州',
+    'district_en': 'changxingxian',
+    'district_zh': '长兴县',
+    'url': 'https://huzhou.lianjia.com/zufang/changxingxian/'
+}, {
+    'city_en': 'huzhou',
+    'city_zh': '湖州',
+    'district_en': 'deqingxian2',
+    'district_zh': '德清县',
+    'url': 'https://huzhou.lianjia.com/zufang/deqingxian2/'
+}, {
+    'city_en': 'huzhou',
+    'city_zh': '湖州',
+    'district_en': 'wuxingqu',
+    'district_zh': '吴兴区',
+    'url': 'https://huzhou.lianjia.com/zufang/wuxingqu/'
+}, {
+    'city_en': 'huzhou',
+    'city_zh': '湖州',
+    'district_en': 'anjixian',
+    'district_zh': '安吉县',
+    'url': 'https://huzhou.lianjia.com/zufang/anjixian/'
+}, {
+    'city_en': 'jx',
+    'city_zh': '嘉兴',
+    'district_en': 'nanhuqu',
+    'district_zh': '南湖区',
+    'url': 'https://jx.lianjia.com/zufang/nanhuqu/'
+}, {
+    'city_en': 'jx',
+    'city_zh': '嘉兴',
+    'district_en': 'tongxiangshi',
+    'district_zh': '桐乡市',
+    'url': 'https://jx.lianjia.com/zufang/tongxiangshi/'
+}, {
+    'city_en': 'jx',
+    'city_zh': '嘉兴',
+    'district_en': 'jiashanxian',
+    'district_zh': '嘉善县',
+    'url': 'https://jx.lianjia.com/zufang/jiashanxian/'
+}, {
+    'city_en': 'jx',
+    'city_zh': '嘉兴',
+    'district_en': 'xiuzhouqu',
+    'district_zh': '秀洲区',
+    'url': 'https://jx.lianjia.com/zufang/xiuzhouqu/'
+}, {
+    'city_en': 'jx',
+    'city_zh': '嘉兴',
+    'district_en': 'hainingshi1',
+    'district_zh': '海宁市',
+    'url': 'https://jx.lianjia.com/zufang/hainingshi1/'
+}, {
+    'city_en': 'jx',
+    'city_zh': '嘉兴',
+    'district_en': 'haiyanxian',
+    'district_zh': '海盐县',
+    'url': 'https://jx.lianjia.com/zufang/haiyanxian/'
+}, {
+    'city_en': 'jx',
+    'city_zh': '嘉兴',
+    'district_en': 'pinghushi',
+    'district_zh': '平湖市',
+    'url': 'https://jx.lianjia.com/zufang/pinghushi/'
+}, {
+    'city_en': 'jh',
+    'city_zh': '金华',
+    'district_en': 'dongyangshi',
+    'district_zh': '东阳市',
+    'url': 'https://jh.lianjia.com/zufang/dongyangshi/'
+}, {
+    'city_en': 'jh',
+    'city_zh': '金华',
+    'district_en': 'yiwushi',
+    'district_zh': '义乌市',
+    'url': 'https://jh.lianjia.com/zufang/yiwushi/'
+}, {
+    'city_en': 'jh',
+    'city_zh': '金华',
+    'district_en': 'lanxishi',
+    'district_zh': '兰溪市',
+    'url': 'https://jh.lianjia.com/zufang/lanxishi/'
+}, {
+    'city_en': 'jh',
+    'city_zh': '金华',
+    'district_en': 'wuchengqu',
+    'district_zh': '婺城区',
+    'url': 'https://jh.lianjia.com/zufang/wuchengqu/'
+}, {
+    'city_en': 'jh',
+    'city_zh': '金华',
+    'district_en': 'wuyixian',
+    'district_zh': '武义县',
+    'url': 'https://jh.lianjia.com/zufang/wuyixian/'
+}, {
+    'city_en': 'jh',
+    'city_zh': '金华',
+    'district_en': 'yongkangshi',
+    'district_zh': '永康市',
+    'url': 'https://jh.lianjia.com/zufang/yongkangshi/'
+}, {
+    'city_en': 'jh',
+    'city_zh': '金华',
+    'district_en': 'pujiangxian',
+    'district_zh': '浦江县',
+    'url': 'https://jh.lianjia.com/zufang/pujiangxian/'
+}, {
+    'city_en': 'jh',
+    'city_zh': '金华',
+    'district_en': 'pananxian',
+    'district_zh': '磐安县',
+    'url': 'https://jh.lianjia.com/zufang/pananxian/'
+}, {
+    'city_en': 'jh',
+    'city_zh': '金华',
+    'district_en': 'jindongqu',
+    'district_zh': '金东区',
+    'url': 'https://jh.lianjia.com/zufang/jindongqu/'
+}, {
+    'city_en': 'nb',
+    'city_zh': '宁波',
+    'district_en': 'haishuqu1',
+    'district_zh': '海曙区',
+    'url': 'https://nb.lianjia.com/zufang/haishuqu1/'
+}, {
+    'city_en': 'nb',
+    'city_zh': '宁波',
+    'district_en': 'jiangbeiqu1',
+    'district_zh': '江北区',
+    'url': 'https://nb.lianjia.com/zufang/jiangbeiqu1/'
+}, {
+    'city_en': 'nb',
+    'city_zh': '宁波',
+    'district_en': 'zhenhaiqu1',
+    'district_zh': '镇海区',
+    'url': 'https://nb.lianjia.com/zufang/zhenhaiqu1/'
+}, {
+    'city_en': 'nb',
+    'city_zh': '宁波',
+    'district_en': 'beilunqu1',
+    'district_zh': '北仑区',
+    'url': 'https://nb.lianjia.com/zufang/beilunqu1/'
+}, {
+    'city_en': 'nb',
+    'city_zh': '宁波',
+    'district_en': 'yinzhouqu2',
+    'district_zh': '鄞州区',
+    'url': 'https://nb.lianjia.com/zufang/yinzhouqu2/'
+}, {
+    'city_en': 'nb',
+    'city_zh': '宁波',
+    'district_en': 'yuyaoshi',
+    'district_zh': '余姚市',
+    'url': 'https://nb.lianjia.com/zufang/yuyaoshi/'
+}, {
+    'city_en': 'nb',
+    'city_zh': '宁波',
+    'district_en': 'cixishi',
+    'district_zh': '慈溪市',
+    'url': 'https://nb.lianjia.com/zufang/cixishi/'
+}, {
+    'city_en': 'nb',
+    'city_zh': '宁波',
+    'district_en': 'fenghuaqu',
+    'district_zh': '奉化区',
+    'url': 'https://nb.lianjia.com/zufang/fenghuaqu/'
+}, {
+    'city_en': 'nb',
+    'city_zh': '宁波',
+    'district_en': 'xiangshanxian',
+    'district_zh': '象山县',
+    'url': 'https://nb.lianjia.com/zufang/xiangshanxian/'
+}, {
+    'city_en': 'nb',
+    'city_zh': '宁波',
+    'district_en': 'ninghaixian',
+    'district_zh': '宁海县',
+    'url': 'https://nb.lianjia.com/zufang/ninghaixian/'
+}, {
+    'city_en': 'nb',
+    'city_zh': '宁波',
+    'district_en': 'hangzhouwanxinqu1',
+    'district_zh': '杭州湾新区',
+    'url': 'https://nb.lianjia.com/zufang/hangzhouwanxinqu1/'
+}, {
+    'city_en': 'quzhou',
+    'city_zh': '衢州',
+    'district_en': 'changshanxian',
+    'district_zh': '常山县',
+    'url': 'https://quzhou.lianjia.com/zufang/changshanxian/'
+}, {
+    'city_en': 'quzhou',
+    'city_zh': '衢州',
+    'district_en': 'kaihuaxian',
+    'district_zh': '开化县',
+    'url': 'https://quzhou.lianjia.com/zufang/kaihuaxian/'
+}, {
+    'city_en': 'quzhou',
+    'city_zh': '衢州',
+    'district_en': 'kechengqu',
+    'district_zh': '柯城区',
+    'url': 'https://quzhou.lianjia.com/zufang/kechengqu/'
+}, {
+    'city_en': 'quzhou',
+    'city_zh': '衢州',
+    'district_en': 'jiangshanshi',
+    'district_zh': '江山市',
+    'url': 'https://quzhou.lianjia.com/zufang/jiangshanshi/'
+}, {
+    'city_en': 'quzhou',
+    'city_zh': '衢州',
+    'district_en': 'qujiangqu',
+    'district_zh': '衢江区',
+    'url': 'https://quzhou.lianjia.com/zufang/qujiangqu/'
+}, {
+    'city_en': 'quzhou',
+    'city_zh': '衢州',
+    'district_en': 'longyouxian',
+    'district_zh': '龙游县',
+    'url': 'https://quzhou.lianjia.com/zufang/longyouxian/'
+}, {
+    'city_en': 'sx',
+    'city_zh': '绍兴',
+    'district_en': 'keqiaoqu',
+    'district_zh': '柯桥区',
+    'url': 'https://sx.lianjia.com/zufang/keqiaoqu/'
+}, {
+    'city_en': 'sx',
+    'city_zh': '绍兴',
+    'district_en': 'zhujishi',
+    'district_zh': '诸暨市',
+    'url': 'https://sx.lianjia.com/zufang/zhujishi/'
+}, {
+    'city_en': 'sx',
+    'city_zh': '绍兴',
+    'district_en': 'shangyuqu',
+    'district_zh': '上虞区',
+    'url': 'https://sx.lianjia.com/zufang/shangyuqu/'
+}, {
+    'city_en': 'sx',
+    'city_zh': '绍兴',
+    'district_en': 'yuechengqu',
+    'district_zh': '越城区',
+    'url': 'https://sx.lianjia.com/zufang/yuechengqu/'
+}, {
+    'city_en': 'sx',
+    'city_zh': '绍兴',
+    'district_en': 'shengzhoushi',
+    'district_zh': '嵊州市',
+    'url': 'https://sx.lianjia.com/zufang/shengzhoushi/'
+}, {
+    'city_en': 'sx',
+    'city_zh': '绍兴',
+    'district_en': 'xinchangxian',
+    'district_zh': '新昌县',
+    'url': 'https://sx.lianjia.com/zufang/xinchangxian/'
+}, {
+    'city_en': 'taizhou',
+    'city_zh': '台州',
+    'district_en': 'sanmenxian',
+    'district_zh': '三门县',
+    'url': 'https://taizhou.lianjia.com/zufang/sanmenxian/'
+}, {
+    'city_en': 'taizhou',
+    'city_zh': '台州',
+    'district_en': 'linhaishi',
+    'district_zh': '临海市',
+    'url': 'https://taizhou.lianjia.com/zufang/linhaishi/'
+}, {
+    'city_en': 'taizhou',
+    'city_zh': '台州',
+    'district_en': 'xianjuxian',
+    'district_zh': '仙居县',
+    'url': 'https://taizhou.lianjia.com/zufang/xianjuxian/'
+}, {
+    'city_en': 'taizhou',
+    'city_zh': '台州',
+    'district_en': 'tiantaixian',
+    'district_zh': '天台县',
+    'url': 'https://taizhou.lianjia.com/zufang/tiantaixian/'
+}, {
+    'city_en': 'taizhou',
+    'city_zh': '台州',
+    'district_en': 'jiaojiangqu',
+    'district_zh': '椒江区',
+    'url': 'https://taizhou.lianjia.com/zufang/jiaojiangqu/'
+}, {
+    'city_en': 'taizhou',
+    'city_zh': '台州',
+    'district_en': 'wenlingshi',
+    'district_zh': '温岭市',
+    'url': 'https://taizhou.lianjia.com/zufang/wenlingshi/'
+}, {
+    'city_en': 'taizhou',
+    'city_zh': '台州',
+    'district_en': 'yuhuanshi',
+    'district_zh': '玉环市',
+    'url': 'https://taizhou.lianjia.com/zufang/yuhuanshi/'
+}, {
+    'city_en': 'taizhou',
+    'city_zh': '台州',
+    'district_en': 'luqiaoqu',
+    'district_zh': '路桥区',
+    'url': 'https://taizhou.lianjia.com/zufang/luqiaoqu/'
+}, {
+    'city_en': 'taizhou',
+    'city_zh': '台州',
+    'district_en': 'huangyanqu',
+    'district_zh': '黄岩区',
+    'url': 'https://taizhou.lianjia.com/zufang/huangyanqu/'
+}, {
+    'city_en': 'wz',
+    'city_zh': '温州',
+    'district_en': 'luchengqu',
+    'district_zh': '鹿城区',
+    'url': 'https://wz.lianjia.com/zufang/luchengqu/'
+}, {
+    'city_en': 'wz',
+    'city_zh': '温州',
+    'district_en': 'ouhaiqu',
+    'district_zh': '瓯海区',
+    'url': 'https://wz.lianjia.com/zufang/ouhaiqu/'
+}, {
+    'city_en': 'wz',
+    'city_zh': '温州',
+    'district_en': 'longwanqu',
+    'district_zh': '龙湾区',
+    'url': 'https://wz.lianjia.com/zufang/longwanqu/'
+}, {
+    'city_en': 'wz',
+    'city_zh': '温州',
+    'district_en': 'yueqingshi',
+    'district_zh': '乐清市',
+    'url': 'https://wz.lianjia.com/zufang/yueqingshi/'
+}, {
+    'city_en': 'wz',
+    'city_zh': '温州',
+    'district_en': 'cangnanxian',
+    'district_zh': '苍南县',
+    'url': 'https://wz.lianjia.com/zufang/cangnanxian/'
+}, {
+    'city_en': 'wz',
+    'city_zh': '温州',
+    'district_en': 'ruianshi',
+    'district_zh': '瑞安市',
+    'url': 'https://wz.lianjia.com/zufang/ruianshi/'
+}, {
+    'city_en': 'wz',
+    'city_zh': '温州',
+    'district_en': 'pingyangxian',
+    'district_zh': '平阳县',
+    'url': 'https://wz.lianjia.com/zufang/pingyangxian/'
+}, {
+    'city_en': 'wz',
+    'city_zh': '温州',
+    'district_en': 'dongtouqu',
+    'district_zh': '洞头区',
+    'url': 'https://wz.lianjia.com/zufang/dongtouqu/'
+}, {
+    'city_en': 'wz',
+    'city_zh': '温州',
+    'district_en': 'taishunxian',
+    'district_zh': '泰顺县',
+    'url': 'https://wz.lianjia.com/zufang/taishunxian/'
+}, {
+    'city_en': 'wz',
+    'city_zh': '温州',
+    'district_en': 'yongjiaxian',
+    'district_zh': '永嘉县',
+    'url': 'https://wz.lianjia.com/zufang/yongjiaxian/'
+}, {
+    'city_en': 'wz',
+    'city_zh': '温州',
+    'district_en': 'longgangshi',
+    'district_zh': '龙港市',
+    'url': 'https://wz.lianjia.com/zufang/longgangshi/'
+}, {
+    'city_en': 'yw',
+    'city_zh': '义乌',
+    'district_en': 'beiyuan',
+    'district_zh': '北苑',
+    'url': 'https://yw.lianjia.com/zufang/beiyuan/'
+}, {
+    'city_en': 'yw',
+    'city_zh': '义乌',
+    'district_en': 'chengxi3',
+    'district_zh': '城西',
+    'url': 'https://yw.lianjia.com/zufang/chengxi3/'
+}, {
+    'city_en': 'yw',
+    'city_zh': '义乌',
+    'district_en': 'choucheng',
+    'district_zh': '稠城',
+    'url': 'https://yw.lianjia.com/zufang/choucheng/'
+}, {
+    'city_en': 'yw',
+    'city_zh': '义乌',
+    'district_en': 'choujiang',
+    'district_zh': '稠江',
+    'url': 'https://yw.lianjia.com/zufang/choujiang/'
+}, {
+    'city_en': 'yw',
+    'city_zh': '义乌',
+    'district_en': 'futian',
+    'district_zh': '福田',
+    'url': 'https://yw.lianjia.com/zufang/futian/'
+}, {
+    'city_en': 'yw',
+    'city_zh': '义乌',
+    'district_en': 'fotang',
+    'district_zh': '佛堂',
+    'url': 'https://yw.lianjia.com/zufang/fotang/'
+}, {
+    'city_en': 'yw',
+    'city_zh': '义乌',
+    'district_en': 'houzhai',
+    'district_zh': '后宅',
+    'url': 'https://yw.lianjia.com/zufang/houzhai/'
+}, {
+    'city_en': 'yw',
+    'city_zh': '义乌',
+    'district_en': 'jiangdong4',
+    'district_zh': '江东',
+    'url': 'https://yw.lianjia.com/zufang/jiangdong4/'
+}, {
+    'city_en': 'yw',
+    'city_zh': '义乌',
+    'district_en': 'niansanli',
+    'district_zh': '廿三里',
+    'url': 'https://yw.lianjia.com/zufang/niansanli/'
+}, {
+    'city_en': 'yw',
+    'city_zh': '义乌',
+    'district_en': 'suxi',
+    'district_zh': '苏溪',
+    'url': 'https://yw.lianjia.com/zufang/suxi/'
+}, {
+    'city_en': 'yw',
+    'city_zh': '义乌',
+    'district_en': 'yiting',
+    'district_zh': '义亭',
+    'url': 'https://yw.lianjia.com/zufang/yiting/'
+}, {
+    'city_en': 'yw',
+    'city_zh': '义乌',
+    'district_en': 'yiwushi1',
+    'district_zh': '义乌市',
+    'url': 'https://yw.lianjia.com/zufang/yiwushi1/'
+}]
